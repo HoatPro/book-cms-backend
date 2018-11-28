@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import vbee.bookcmsbackend.authorization.IAuthorizationService;
+import vbee.bookcmsbackend.collections.Author;
 import vbee.bookcmsbackend.collections.Role;
 import vbee.bookcmsbackend.collections.User;
 import vbee.bookcmsbackend.config.APIConstant;
@@ -75,24 +76,42 @@ public class UserService implements IUserService {
 			email = null;
 		}
 		User user = userDao.findById(userId, email, ownerEmail);
+		
 		return user;
 	}
 
 	@Override
-	public Object create(User user, String email, String ownerEmail){
+	public Object create(User newUser, String email, String ownerEmail){
 		if (ownerEmail == null || ownerEmail.isEmpty())
-		
 			return null;
 		Integer permission = authorizationService.checkPermission(email, APIConstant.CREATE_USER_FEATURE_API);
 		if (permission == AppConstant.PERMISSION_UNDEFINED)
 			return null;
-		if (user.getEmail() == null || user.getEmail().isEmpty()) {
+		if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
 			return " Email không được để trống!! ";
 		}
-		user.setCreatedAt(new Date());
-		return userRepository.save(user);
+		User userExist = userRepository.findByEmailAndOwnerBy(newUser.getEmail(), ownerEmail);
+		if (userExist != null)
+			return "Người dùng đã tồn tại";
+		newUser.setCreatedAt(new Date());
+		return userRepository.save(newUser);
 	}
-
+	@Override
+	public Object delete(String userId, String email, String ownerEmail) {
+		if (ownerEmail == null || ownerEmail.isEmpty())
+			return null;
+		Integer permission = authorizationService.checkPermission(email, APIConstant.DELETE_USER_FEATURE_API);
+		if (permission == AppConstant.PERMISSION_UNDEFINED)
+			return null;
+		else if (permission == AppConstant.PERMISSION_ALL_UNIT) {
+			email = null;
+		}
+		User userExist = userDao.findById(userId, email, ownerEmail);
+		if (userExist == null)
+			return null;
+		userRepository.delete(userExist);
+		return Boolean.TRUE;
+	}
 	@Override
 	public void loadAllUserFeatures() {
 		List<User> users = userRepository.findAll();
@@ -108,14 +127,5 @@ public class UserService implements IUserService {
 			featureIds = null;
 		}
 	}
-
-	
-
-	@Override
-	public Object delete(String userId, String email, String ownerBy) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 }

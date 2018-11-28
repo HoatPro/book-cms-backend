@@ -10,10 +10,7 @@ public interface IUserService {
 	User findByEmail(String email);
 
 	Object create(User newUser, String email, String ownerEmail);
-
-	void loadAllUserFeatures();
-
-
+	
 	Object delete(String userId, String email, String ownerBy);
 
 	Item findAll(String keyword, Integer page, Integer size, String email, String ownerBy);
@@ -21,5 +18,9 @@ public interface IUserService {
 	User findById(String userId, String email, String ownerBy);
 
 	List<User> findByUserIds(List<String> userIds);
+
+	void loadAllUserFeatures();
+
+
 
 }

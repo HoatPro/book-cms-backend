@@ -4,11 +4,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@Document (collection = "roles")
+@Document(collection = "roles")
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Role {
 
@@ -19,6 +20,10 @@ public class Role {
 
 	Date createdAt;
 	Date updatedAt;
+
+	// not save to db
+	@Transient
+	List<Feature> features;
 
 	public Role() {
 	}
@@ -61,6 +66,14 @@ public class Role {
 
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public List<Feature> getFeatures() {
+		return features;
+	}
+
+	public void setFeatures(List<Feature> features) {
+		this.features = features;
 	}
 
 }

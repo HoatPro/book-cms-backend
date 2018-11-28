@@ -35,7 +35,7 @@ public class RoleController {
 	
 //	find All
 	@GetMapping()
-	public ResponseEntity<ResponseMessage> findAll(HttpServletRequest request) {
+	public ResponseEntity<ResponseMessage> findAll(HttpServletRequest request,String roleId ) {
 		User user = authenSSOService.verify(request);
 		if (user == null)
 			return new ResponseEntity<ResponseMessage>(HttpStatus.UNAUTHORIZED);

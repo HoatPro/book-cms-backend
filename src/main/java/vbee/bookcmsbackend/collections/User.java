@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -25,9 +26,13 @@ public class User {
 	Date createdAt;
 	Date updatedAt;
 
+	// not save to db
+	@Transient
+	List<Role> roles;
+
 	public User() {
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -35,6 +40,7 @@ public class User {
 	public void setId(String id) {
 		this.id = id;
 	}
+
 	public String getEmail() {
 		return email;
 	}
@@ -42,6 +48,7 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getName() {
 		return name;
 	}
@@ -104,6 +111,14 @@ public class User {
 
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 
 }

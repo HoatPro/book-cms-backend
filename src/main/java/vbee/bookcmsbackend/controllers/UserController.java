@@ -75,7 +75,7 @@ public class UserController {
 		Object response = userService.create(newUser, user.getEmail(), user.getOwnerBy());
 		ResponseMessage resMessage = new ResponseMessage();
 		if (response == null) {
-			System.out.println("aaaaaaaaaaaaaaa");
+			
 			return new ResponseEntity<ResponseMessage>(HttpStatus.FORBIDDEN);
 		} else if (response instanceof String) {
 			resMessage.setMessage((String) response);
