@@ -36,6 +36,7 @@ public class BookUtils {
 	}
 
 	public static String prepareProcessingChapterContent(Chapter chapter) {
+		if (chapter.getContent() == null) return "";
 		String content = chapter.getContent().trim();
 		content = content.replaceAll("<p>", ". ").replaceAll("</p>", " ").trim();
 		content = content.replaceAll("\\s{3}", "~");

@@ -48,7 +48,7 @@ public class NormalizationThread extends Thread {
 		for (Chapter chapter : chapters) {
 			queueChapterNSW.add(chapter);
 		}
-		logger.info("ws: " + bookEntity.getConfigProperties().getWsNomalizationPath() + " --- book title: "
+		logger.info("queue size" + queueChapterNSW.size() + "ws: " + bookEntity.getConfigProperties().getWsNomalizationPath() + " --- book title: "
 				+ bookEntity.getBook().getTitle());
 		startNormalizationChapter();
 	}
@@ -94,6 +94,7 @@ public class NormalizationThread extends Thread {
 							book.setStatusId(AppConstant.NORMALIZED);
 							logger.info("Normalized book: " + book.getTitle());
 							bookRepository.save(book);
+							NormalizationBookQueue.finish();
 						}
 						canRun = true;
 						bookEntity = null;
@@ -116,16 +117,25 @@ public class NormalizationThread extends Thread {
 
 			};
 			ws.connect();
+			int i = 0;
 			while (true) {
+				logger.info("CONNECTING...");
+				i++;
 				if (ws.getConnection().isOpen()) {
-					logger.info("CONNECTING...");
 					break;
 				}
-				Thread.sleep(100);
+				if (i == 5) {
+					canRun = true;
+					break;
+				}
+				Thread.sleep(500);
 			}
 
 		} catch (InterruptedException | URISyntaxException | NotYetConnectedException e) {
 			logger.info("Error when normalization Book: " + book.getTitle() + " ----" + e.getMessage());
+			canRun = true;
+			startNormalizationChapter();
+			NormalizationBookQueue.finish();
 		}
 
 	}

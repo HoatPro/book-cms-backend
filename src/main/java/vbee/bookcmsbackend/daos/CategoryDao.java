@@ -36,30 +36,36 @@ public class CategoryDao implements ICategoryDao {
 		// default page, size
 		if (page == null)
 			page = 0;
-		if (size == null)
-			size = 10;
 		Query query = new Query();
 		if (keyword != null && !keyword.isEmpty())
+			
 			query.addCriteria(Criteria.where("name").regex(keyword));
+		query.addCriteria(Criteria.where("ownerBy").is(ownerEmail));
+		
 		// count
 		long count = mongoTemplate.count(query, Category.class);
-		int totalPages = HanleUltis.countTotalPages(Integer.parseInt("" + count), size);
-		// paging & sort
-		PageRequest pageRequest = null;
-		Sort sortQuery = null;
-		String property = "";
-		if (sort != null && sort.contains("_DESC")) {
-			property = sort.replace("_DESC", "");
-			sortQuery = new Sort(Direction.DESC, property);
-		} else if (sort != null && sort.contains("_ASC")) {
-			property = sort.replaceAll("_ASC", "");
-			sortQuery = new Sort(Direction.ASC, property);
-		} else {
-			property = "createdAt";
-			sortQuery = new Sort(Direction.DESC, property);
+		int totalPages = 1;
+		if (size != null) {
+			totalPages = HanleUltis.countTotalPages(Integer.parseInt("" + count), size);
+			// paging & sort
+			PageRequest pageRequest = null;
+			Sort sortQuery = null;
+			String property = "";
+			if (sort != null && sort.contains("_DESC")) {
+				property = sort.replace("_DESC", "");
+				sortQuery = new Sort(Direction.DESC, property);
+			} else if (sort != null && sort.contains("_ASC")) {
+				property = sort.replaceAll("_ASC", "");
+				sortQuery = new Sort(Direction.ASC, property);
+			} else {
+				property = "createdAt";
+				sortQuery = new Sort(Direction.DESC, property);
+			}
+			pageRequest = new PageRequest(page, size, sortQuery);
+			query.with(pageRequest);
 		}
-		pageRequest = new PageRequest(page, size, sortQuery);
-		query.with(pageRequest);
+		 
+		
 
 		// fields
 		if (fields != null && !fields.isEmpty()) {
@@ -71,6 +77,8 @@ public class CategoryDao implements ICategoryDao {
 		List<Category> categories = mongoTemplate.find(query, Category.class);
 		return new Item(categories, totalPages);
 	}
+
+
 
 	@Override
 	public Category findById(String categoryId, String email, String ownerEmail) {

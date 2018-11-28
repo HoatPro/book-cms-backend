@@ -135,6 +135,9 @@ public class ChapterService implements IChapterService {
 		if (chapter.getContent() != null && !chapter.getContent().isEmpty()) {
 			chapterExist.setContent(chapter.getContent());
 		}
+		if (chapter.getNormalizationValue() != null && !chapter.getNormalizationValue().isEmpty()) {
+			chapterExist.setNormalizationValue(chapter.getNormalizationValue());
+		}
 		chapterExist.setUpdatedAt(new Date());
 		chapterExist.setUpdatedBy(email);
 		return chapterRepository.save(chapterExist);

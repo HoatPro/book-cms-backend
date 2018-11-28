@@ -74,7 +74,7 @@ public class CategoryService implements ICategoryService {
 		Integer permission = authorizationService.checkPermission(email, APIConstant.CREATE_CATEGORY_FEATURE_API);
 		if (permission == AppConstant.PERMISSION_UNDEFINED)
 			return null;
-		if (newCategory.getName() == null || !newCategory.getName().isEmpty()) {
+		if (newCategory.getName() == null || newCategory.getName().isEmpty()) {
 			return "Tên thể loại không được để trống";
 		}
 		Category categoryExist = categoryRepository.findByNameAndOwnerBy(newCategory.getName(), ownerEmail);
@@ -130,6 +130,7 @@ public class CategoryService implements ICategoryService {
 	private Object updateCategory(Category category, Category categoryExist, String email) {
 		if (category.getName() != null && !category.getName().isEmpty()
 				&& !category.getName().equals(categoryExist.getName())) {
+		
 			Category categoryCheck = categoryRepository.findByNameAndOwnerBy(category.getName(),
 					categoryExist.getOwnerBy());
 			if (categoryCheck != null)
@@ -138,9 +139,10 @@ public class CategoryService implements ICategoryService {
 		}
 		if (category.getDescription() != null && !category.getDescription().isEmpty())
 			categoryExist.setDescription(category.getDescription());
+	
 		category.setUpdatedAt(new Date());
 		category.setUpdatedBy(email);
-		return categoryRepository.save(category);
+		return categoryRepository.save(categoryExist);
 	}
 
 }

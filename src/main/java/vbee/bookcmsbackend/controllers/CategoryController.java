@@ -7,12 +7,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import vbee.bookcmsbackend.authen.sso.IAuthenSSOService;
 import vbee.bookcmsbackend.collections.Book;
@@ -22,6 +25,8 @@ import vbee.bookcmsbackend.models.Item;
 import vbee.bookcmsbackend.models.ResponseMessage;
 import vbee.bookcmsbackend.services.books.ICategoryService;
 
+@RestController
+@RequestMapping("/api/v1/categories")
 public class CategoryController {
 
 	private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
@@ -32,7 +37,9 @@ public class CategoryController {
 	@Autowired
 	ICategoryService categoryService;
 
+	
 	// findAll
+	@CrossOrigin
 	@GetMapping()
 	public ResponseEntity<ResponseMessage> findAll(HttpServletRequest request, Integer page, Integer size,
 			String fields, String sort, String statusIds, String categoryId, String keyword) {
@@ -49,7 +56,7 @@ public class CategoryController {
 		return ResponseEntity.ok(resMessage);
 	}
 
-	// get book detail
+	// get category detail
 	@GetMapping("/{categoryId}")
 	public ResponseEntity<ResponseMessage> getCategory(HttpServletRequest request, @PathVariable String categoryId) {
 		User user = authenSSOService.verify(request);
@@ -65,7 +72,7 @@ public class CategoryController {
 		return ResponseEntity.ok(resMessage);
 	}
 
-	// creat book
+	// creat category
 	@PostMapping()
 	public ResponseEntity<ResponseMessage> createCategory(HttpServletRequest request,
 			@RequestBody Category newCategory) {
@@ -85,7 +92,8 @@ public class CategoryController {
 		return ResponseEntity.ok(resMessage);
 	}
 
-	// update book
+	// update category
+	@CrossOrigin
 	@PutMapping("/{categoryId}")
 	public ResponseEntity<ResponseMessage> updateBook(HttpServletRequest request, @PathVariable String categoryId,
 			@RequestBody Category existCategory) {
@@ -105,7 +113,8 @@ public class CategoryController {
 		return ResponseEntity.ok(resMessage);
 	}
 
-	// delete book
+	// delete category
+	@CrossOrigin
 	@DeleteMapping("/{categoryId}")
 	public ResponseEntity<ResponseMessage> deleteBook(HttpServletRequest request, @PathVariable String categoryId) {
 		User user = authenSSOService.verify(request);
