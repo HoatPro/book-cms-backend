@@ -69,7 +69,6 @@ public class UserService implements IUserService {
 		if (ownerEmail == null || ownerEmail.isEmpty())
 			return null;
 		Integer permission = authorizationService.checkPermission(email, APIConstant.FIND_USER_FEATURE_API);
-		System.out.println(permission);
 		if (permission == AppConstant.PERMISSION_UNDEFINED)
 			return null;
 		else if (permission == AppConstant.PERMISSION_ALL_UNIT) {
@@ -94,6 +93,7 @@ public class UserService implements IUserService {
 		if (userExist != null)
 			return "Người dùng đã tồn tại";
 		newUser.setCreatedAt(new Date());
+		newUser.setOwnerBy(ownerEmail);
 		return userRepository.save(newUser);
 	}
 	@Override

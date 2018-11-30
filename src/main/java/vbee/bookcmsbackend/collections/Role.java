@@ -17,6 +17,7 @@ public class Role {
 	String id;
 	String name;
 	List<String> featureIds;
+	Boolean isOwner;
 
 	Date createdAt;
 	Date updatedAt;
@@ -74,6 +75,14 @@ public class Role {
 
 	public void setFeatures(List<Feature> features) {
 		this.features = features;
+	}
+
+	public Boolean getIsOwner() {
+		return isOwner;
+	}
+
+	public void setIsOwner(Boolean isOwner) {
+		this.isOwner = isOwner;
 	}
 
 }

@@ -1,9 +1,12 @@
 package vbee.bookcmsbackend.daos;
 
+import java.util.List;
+
+import vbee.bookcmsbackend.collections.Role;
 import vbee.bookcmsbackend.models.Item;
 
 public interface IRoleDao {
 
-	Item findAll(String email, String ownerEmail);
+	List<Role> findAll(String email, String ownerEmail);
 
 }

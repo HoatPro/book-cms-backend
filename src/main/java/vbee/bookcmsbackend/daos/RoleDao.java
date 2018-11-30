@@ -1,5 +1,6 @@
 package vbee.bookcmsbackend.daos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -13,7 +14,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-
+import vbee.bookcmsbackend.collections.Feature;
 import vbee.bookcmsbackend.collections.Role;
 import vbee.bookcmsbackend.models.Item;
 import vbee.bookcmsbackend.utils.HanleUltis;
@@ -30,12 +31,28 @@ public class RoleDao implements IRoleDao{
 	private static final Logger logger = LoggerFactory.getLogger(RoleDao.class);
 
 	@Override
-	public Item findAll( String email, String ownerEmail) {
+	public List<Role> findAll( String email, String ownerEmail) {
 		Query query = new Query();
 
 		List<Role> roles = mongoTemplate.find(query, Role.class);
-		System.out.println("query");
-		return new Item(roles, null);
+		System.out.println(roles);
+		for (Role role : roles) {
+			if (role.getIsOwner() != null && role.getIsOwner()) continue;
+			List<Feature> features = new ArrayList<>();
+			for (String featureId : role.getFeatureIds()) {
+				Feature feature = mongoTemplate.findById(featureId, Feature.class);
+				if (feature != null) {
+					feature.setFrontendKey(null);
+					feature.setBackendKey(null);
+					features.add(feature);
+				}
+			}
+			role.setFeatureIds(null);
+			role.setFeatures(features);
+		}
+		
+		
+		return  roles;
 	}
 	
 

@@ -52,7 +52,6 @@ public class UserDao implements IUserDao{
 		List<User> users = mongoTemplate.find(query, User.class);
 	      for (User user : users) {
 	    	  List<Role> roles = new ArrayList<>();
-	    	  System.out.println(user.getRoleIds());
 	  		  for (String roleId : user.getRoleIds()) {
 	  			Role role = mongoTemplate.findById(roleId, Role.class);
 	  			if (role != null) {

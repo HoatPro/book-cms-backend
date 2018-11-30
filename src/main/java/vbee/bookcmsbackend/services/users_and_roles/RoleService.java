@@ -1,5 +1,6 @@
 package vbee.bookcmsbackend.services.users_and_roles;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class RoleService implements IRoleService{
 	}
 
 	@Override
-	public Item findAll( String email, String ownerEmail) {
+	public List<Role> findAll( String email, String ownerEmail) {
 		if (ownerEmail == null || ownerEmail.isEmpty())
 			return null;
 		Integer permission = authorizationService.checkPermission(email, APIConstant.ROLE_USER_FEATURE_API);

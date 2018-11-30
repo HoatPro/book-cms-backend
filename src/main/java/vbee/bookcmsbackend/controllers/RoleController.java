@@ -1,4 +1,6 @@
 package vbee.bookcmsbackend.controllers;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -40,12 +42,12 @@ public class RoleController {
 		if (user == null)
 			return new ResponseEntity<ResponseMessage>(HttpStatus.UNAUTHORIZED);
 		ResponseMessage resMessage = new ResponseMessage();
-		Item item = roleService.findAll(user.getEmail(), user.getOwnerBy());
-		if (item == null) {
+		List<Role> roles = roleService.findAll(user.getEmail(), user.getOwnerBy());
+		if (roles == null) {
 			return new ResponseEntity<ResponseMessage>(HttpStatus.FORBIDDEN);
 		}
 		resMessage.setStatus(1);
-		resMessage.setResults(item);
+		resMessage.setResults(roles);
 		return ResponseEntity.ok(resMessage);
 	}
 }
