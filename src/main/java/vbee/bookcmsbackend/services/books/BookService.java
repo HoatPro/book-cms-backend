@@ -190,16 +190,18 @@ public class BookService implements IBookService {
 			}
 			bookExist.setAuthorIds(authorIds);
 		}
-
 		if (book.getCategories() != null) {
 			List<String> categoryIds = new ArrayList<>();
 			for (Category category : book.getCategories()) {
 				Category categoryExist = categoryService.findById(category.getId());
 				if (categoryExist != null) {
+					
 					categoryIds.add(categoryExist.getId());
 				}
 			}
 			bookExist.setCategoryIds(categoryIds);
+
+			System.out.println(bookExist.getCategoryIds());
 		}
 
 		if (book.getImage() != null && !book.getImage().isEmpty())

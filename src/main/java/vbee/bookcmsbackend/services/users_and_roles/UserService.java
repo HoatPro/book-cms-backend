@@ -21,8 +21,6 @@ import vbee.bookcmsbackend.models.Item;
 import vbee.bookcmsbackend.models.UserMapFeature;
 import vbee.bookcmsbackend.repositories.UserRepository;
 
-
-
 @Service
 public class UserService implements IUserService {
 
@@ -33,13 +31,15 @@ public class UserService implements IUserService {
 
 	@Autowired
 	IRoleService roleService;
-	
+
 	@Autowired
 	IAuthorizationService authorizationService;
-	
+
 	@Autowired
 	IUserDao userDao;
-  
+
+	private List<String> roleIds;
+
 	@Override
 	public List<User> findByUserIds(List<String> userId) {
 		return userRepository.findByUserIds(userId);
@@ -52,6 +52,7 @@ public class UserService implements IUserService {
 			return option.get();
 		return null;
 	}
+
 	@Override
 	public Item findAll(String keyword, Integer page, Integer size, String email, String ownerEmail) {
 		if (ownerEmail == null || ownerEmail.isEmpty())
@@ -62,8 +63,9 @@ public class UserService implements IUserService {
 		else if (permission == AppConstant.PERMISSION_ALL_UNIT)
 			email = null;
 		return userDao.findAll(keyword, page, size, email, ownerEmail);
-		
+
 	}
+
 	@Override
 	public User findById(String userId, String email, String ownerEmail) {
 		if (ownerEmail == null || ownerEmail.isEmpty())
@@ -74,13 +76,13 @@ public class UserService implements IUserService {
 		else if (permission == AppConstant.PERMISSION_ALL_UNIT) {
 			email = null;
 		}
-		User user = userDao.findById(userId, email, ownerEmail);
-		
+		User user = userDao.findById(userId);
+
 		return user;
 	}
 
 	@Override
-	public Object create(User newUser, String email, String ownerEmail){
+	public Object create(User newUser, String email, String ownerEmail) {
 		if (ownerEmail == null || ownerEmail.isEmpty())
 			return null;
 		Integer permission = authorizationService.checkPermission(email, APIConstant.CREATE_USER_FEATURE_API);
@@ -96,6 +98,7 @@ public class UserService implements IUserService {
 		newUser.setOwnerBy(ownerEmail);
 		return userRepository.save(newUser);
 	}
+
 	@Override
 	public Object delete(String userId, String email, String ownerEmail) {
 		if (ownerEmail == null || ownerEmail.isEmpty())
@@ -106,12 +109,40 @@ public class UserService implements IUserService {
 		else if (permission == AppConstant.PERMISSION_ALL_UNIT) {
 			email = null;
 		}
-		User userExist = userDao.findById(userId, email, ownerEmail);
+		User userExist = userDao.findById(userId);
 		if (userExist == null)
 			return null;
 		userRepository.delete(userExist);
 		return Boolean.TRUE;
 	}
+
+	@Override
+	public Object update(String userId, User user, String email, String ownerEmail) {
+		if (ownerEmail == null || ownerEmail.isEmpty())
+			return null;
+		Integer permission = authorizationService.checkPermission(email, APIConstant.UPDATE_ROLE_FEATURE_API);
+		if (permission == AppConstant.PERMISSION_UNDEFINED)
+			return null;
+		User userExist = userDao.findById(userId);
+		if (userExist == null)
+			return null;
+		return updateRoleUser(user, userExist, email, ownerEmail);
+	}
+
+	private Object updateRoleUser(User user, User userExist, String email, String ownerEmail) {
+		if (user.getRoleIds() != null && !user.getRoleIds().isEmpty()) {
+			Role roleLegal = roleService.findByLegal();
+			if (roleLegal != null) {
+				if (user.getRoleIds().contains(roleLegal.getId())) {
+					user.getRoleIds().remove(roleLegal.getId());
+				}
+				userExist.setRoleIds(user.getRoleIds());
+			}
+		}
+		user.setUpdatedAt(new Date());
+		return userRepository.save(userExist);
+	}
+
 	@Override
 	public void loadAllUserFeatures() {
 		List<User> users = userRepository.findAll();
@@ -120,7 +151,8 @@ public class UserService implements IUserService {
 			if (user.getRoleIds() != null) {
 				for (String roleId : user.getRoleIds()) {
 					Role role = roleService.findById(roleId);
-					featureIds.addAll(role.getFeatureIds()); 
+					if (role.getFeatureIds() != null)
+						featureIds.addAll(role.getFeatureIds());
 				}
 			}
 			UserMapFeature.loadUserFeauture(user.getEmail(), featureIds);

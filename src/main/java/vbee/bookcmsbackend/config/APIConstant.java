@@ -22,5 +22,6 @@ public class APIConstant {
 	public static final String DELETE_USER_FEATURE_API = "delete_user_feature_api";
 	
 	public static final String ROLE_USER_FEATURE_API = "role_user_feature_api";
+	public static final String UPDATE_ROLE_FEATURE_API = "update_role_feature_api";
 	
 }

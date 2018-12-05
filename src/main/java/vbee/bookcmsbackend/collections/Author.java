@@ -16,7 +16,7 @@ public class Author {
 	String name;
 	String slug;
 	String description;
-	Date birthDate;
+	String birthDate;
 	
 	String ownerBy;
 	
@@ -61,11 +61,11 @@ public class Author {
 		this.description = description;
 	}
 
-	public Date getBirthDate() {
+	public String getBirthDate() {
 		return birthDate;
 	}
 
-	public void setBirthDate(Date birthDate) {
+	public void setBirthDate(String birthDate) {
 		this.birthDate = birthDate;
 	}
 

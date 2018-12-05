@@ -48,4 +48,9 @@ public class RoleService implements IRoleService{
 		
 	}
 
+	@Override
+	public Role findByLegal() {
+		return roleRepository.findByIsOwner(Boolean.TRUE);
+	}
+
 }

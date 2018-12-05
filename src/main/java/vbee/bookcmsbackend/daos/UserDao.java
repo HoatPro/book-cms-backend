@@ -56,16 +56,18 @@ public class UserDao implements IUserDao{
 	  			Role role = mongoTemplate.findById(roleId, Role.class);
 	  			if (role != null) {
 	  				List<Feature> features = new ArrayList<>();
-	  				for (String featureId : role.getFeatureIds()) {
-	  					Feature feature = mongoTemplate.findById(featureId, Feature.class);
-	  					if (feature != null) {
-	  						feature.setFrontendKey(null);
-	  						feature.setBackendKey(null);
-	  						features.add(feature);
-	  					}
+	  				if(role.getFeatureIds() !=null) {
+	  					for (String featureId : role.getFeatureIds()) {
+		  					Feature feature = mongoTemplate.findById(featureId, Feature.class);
+		  					if (feature != null) {
+		  						feature.setFrontendKey(null);
+		  						feature.setBackendKey(null);
+		  						features.add(feature);
+		  					}
+		  				}
 	  				}
 	  				role.setFeatureIds(null);
-	  				role.setFeatures(features);
+//     				role.setFeatures(features);
 	  				roles.add(role);
 	  			}
 	  		}
@@ -77,19 +79,21 @@ public class UserDao implements IUserDao{
 	}
 	
 	@Override
-	public User findById(String userId, String email, String ownerEmail) {
+	public User findById(String userId) {
 		User user =  mongoTemplate.findById(userId, User.class);
 		List<Role> roles = new ArrayList<>();
 		for (String roleId : user.getRoleIds()) {
 			Role role = mongoTemplate.findById(roleId, Role.class);
 			if (role != null) {
 				List<Feature> features = new ArrayList<>();
-				for (String featureId : role.getFeatureIds()) {
-					Feature feature = mongoTemplate.findById(featureId, Feature.class);
-					if (feature != null) {
-						feature.setFrontendKey(null);
-						feature.setBackendKey(null);
-						features.add(feature);
+				if(role.getFeatureIds()!=null) {
+					for (String featureId : role.getFeatureIds()) {
+						Feature feature = mongoTemplate.findById(featureId, Feature.class);
+						if (feature != null) {
+							feature.setFrontendKey(null);
+							feature.setBackendKey(null);
+							features.add(feature);
+						}
 					}
 				}
 				role.setFeatureIds(null);

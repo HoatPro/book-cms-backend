@@ -6,4 +6,6 @@ import vbee.bookcmsbackend.collections.Role;
 
 public interface RoleRepository extends MongoRepository<Role, String>{
 
+	Role findByIsOwner(Boolean isOwner);
+
 }

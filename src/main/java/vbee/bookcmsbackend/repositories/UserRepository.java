@@ -19,6 +19,10 @@ public interface UserRepository extends MongoRepository<User, String>{
 	User findByEmailAndOwnerBy(String email, String ownerEmail);
 
 	
+//
+//	User findByNameOwnerBy(String name,String ownerBy);
+
+	
 
 
 }

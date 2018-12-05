@@ -21,6 +21,11 @@ public class AuthorizationService implements IAuthorizationService {
 		List<Feature> apiFeatures = featureService.findByBackendKey(apiKey);
 		List<String> userFeatures = UserMapFeature.getUserFeature(email);
 		int count = 0;
+		// case owner
+		if (userFeatures.isEmpty()) {
+			return AppConstant.PERMISSION_ALL_UNIT;
+		}
+		// case normal role
 		for (Feature feature : apiFeatures) {
 			if (userFeatures.contains(feature.getId())) {
 				count++;

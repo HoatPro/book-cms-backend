@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import vbee.bookcmsbackend.authorization.IAuthorizationService;
 import vbee.bookcmsbackend.collections.Author;
@@ -85,7 +86,8 @@ public class AuthorService implements IAuthorService {
 
 	private Author createAuthor(Author newAuthor, String email, String ownerEmail) {
 		newAuthor.setCreatedAt(new Date());
-//     	newAuthor.setBirthDate(new Inte);
+		newAuthor.setBirthDate(StringUtils.isEmpty(newAuthor.getBirthDate()) 
+     			? "" : newAuthor.getBirthDate().trim());
 		newAuthor.setCreatedBy(email);
 		newAuthor.setOwnerBy(ownerEmail);
 		newAuthor = authorRepository.save(newAuthor);
@@ -139,6 +141,9 @@ public class AuthorService implements IAuthorService {
 		}
 		if (author.getDescription() != null && !author.getDescription().isEmpty())
 			authorExist.setDescription(author.getDescription());
+		
+		if (author.getBirthDate() != null && !author.getDescription().isEmpty() )
+			authorExist.setBirthDate(author.getBirthDate());
 		author.setUpdatedAt(new Date());
 		author.setUpdatedBy(email);
 		return authorRepository.save(authorExist);

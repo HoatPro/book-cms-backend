@@ -21,6 +21,8 @@ public interface IUserService {
 
 	void loadAllUserFeatures();
 
+	Object update(String userId, User existUser, String email, String ownerBy);
+
 
 
 }

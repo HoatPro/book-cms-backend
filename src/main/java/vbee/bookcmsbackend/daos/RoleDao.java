@@ -33,9 +33,7 @@ public class RoleDao implements IRoleDao{
 	@Override
 	public List<Role> findAll( String email, String ownerEmail) {
 		Query query = new Query();
-
 		List<Role> roles = mongoTemplate.find(query, Role.class);
-		System.out.println(roles);
 		for (Role role : roles) {
 			if (role.getIsOwner() != null && role.getIsOwner()) continue;
 			List<Feature> features = new ArrayList<>();

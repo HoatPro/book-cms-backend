@@ -11,4 +11,6 @@ public interface IRoleService {
 
 	List<Role> findAll(String email, String ownerBy);
 
+	Role findByLegal();
+
 }

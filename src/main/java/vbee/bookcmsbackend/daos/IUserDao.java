@@ -7,6 +7,6 @@ public interface IUserDao {
 
 	Item findAll(String keyword, Integer page, Integer size, String email, String ownerEmail);
 
-	User findById(String userId, String email, String ownerEmail);
+	User findById(String userId);
 
 }

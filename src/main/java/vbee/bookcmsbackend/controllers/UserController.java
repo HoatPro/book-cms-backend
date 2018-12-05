@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import vbee.bookcmsbackend.authen.sso.IAuthenSSOService;
+import vbee.bookcmsbackend.collections.Author;
 import vbee.bookcmsbackend.collections.User;
 import vbee.bookcmsbackend.models.Item;
 import vbee.bookcmsbackend.models.ResponseMessage;
@@ -96,6 +98,26 @@ public class UserController {
 		if (user == null)
 			return new ResponseEntity<ResponseMessage>(HttpStatus.UNAUTHORIZED);
 		Object response = userService.delete(userId, user.getEmail(), user.getOwnerBy());
+		ResponseMessage resMessage = new ResponseMessage();
+		if (response == null) {
+			return new ResponseEntity<ResponseMessage>(HttpStatus.FORBIDDEN);
+		} else if (response instanceof String) {
+			resMessage.setMessage((String) response);
+			resMessage.setStatus(0);
+			return ResponseEntity.ok(resMessage);
+		}
+		resMessage.setStatus(1);
+		return ResponseEntity.ok(resMessage);
+	}
+	//update role user
+	@CrossOrigin
+	@PutMapping("/{userId}")
+	public ResponseEntity<ResponseMessage> updateRoleUser(HttpServletRequest request, @PathVariable String userId,
+			@RequestBody User existUser) {
+		User user = authenSSOService.verify(request);
+		if (user == null)
+			return new ResponseEntity<ResponseMessage>(HttpStatus.UNAUTHORIZED);
+		Object response = userService.update(userId, existUser, user.getEmail(), user.getOwnerBy());
 		ResponseMessage resMessage = new ResponseMessage();
 		if (response == null) {
 			return new ResponseEntity<ResponseMessage>(HttpStatus.FORBIDDEN);
