@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.repository.Query;
 
 import vbee.bookcmsbackend.collections.Author;
 
-
 public interface AuthorRepository extends MongoRepository<Author, String> {
 
 	@Query(value = " { _id: { $in: ?0 } } ", fields = "{ 'name': 1, 'slug': 1 }")

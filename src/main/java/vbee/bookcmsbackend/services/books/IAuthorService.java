@@ -4,7 +4,6 @@ import java.util.List;
 import vbee.bookcmsbackend.collections.Author;
 import vbee.bookcmsbackend.models.Item;
 
-
 import vbee.bookcmsbackend.collections.Author;
 
 public interface IAuthorService {
@@ -22,6 +21,5 @@ public interface IAuthorService {
 	Object delete(String authorId, String email, String ownerBy);
 
 	Object update(String authorId, Author author, String email, String ownerBy);
-
 
 }

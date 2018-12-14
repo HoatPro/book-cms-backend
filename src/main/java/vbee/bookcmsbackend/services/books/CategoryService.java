@@ -130,7 +130,7 @@ public class CategoryService implements ICategoryService {
 	private Object updateCategory(Category category, Category categoryExist, String email) {
 		if (category.getName() != null && !category.getName().isEmpty()
 				&& !category.getName().equals(categoryExist.getName())) {
-		
+
 			Category categoryCheck = categoryRepository.findByNameAndOwnerBy(category.getName(),
 					categoryExist.getOwnerBy());
 			if (categoryCheck != null)
@@ -139,7 +139,7 @@ public class CategoryService implements ICategoryService {
 		}
 		if (category.getDescription() != null && !category.getDescription().isEmpty())
 			categoryExist.setDescription(category.getDescription());
-	
+
 		category.setUpdatedAt(new Date());
 		category.setUpdatedBy(email);
 		return categoryRepository.save(categoryExist);

@@ -9,5 +9,4 @@ public interface IAuthorDao {
 
 	Author findById(String authorId, String email, String ownerEmail);
 
-
 }

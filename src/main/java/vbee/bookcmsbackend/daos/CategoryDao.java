@@ -38,10 +38,10 @@ public class CategoryDao implements ICategoryDao {
 			page = 0;
 		Query query = new Query();
 		if (keyword != null && !keyword.isEmpty())
-			
+
 			query.addCriteria(Criteria.where("name").regex(keyword));
 		query.addCriteria(Criteria.where("ownerBy").is(ownerEmail));
-		
+
 		// count
 		long count = mongoTemplate.count(query, Category.class);
 		int totalPages = 1;
@@ -64,8 +64,6 @@ public class CategoryDao implements ICategoryDao {
 			pageRequest = new PageRequest(page, size, sortQuery);
 			query.with(pageRequest);
 		}
-		 
-		
 
 		// fields
 		if (fields != null && !fields.isEmpty()) {
@@ -77,8 +75,6 @@ public class CategoryDao implements ICategoryDao {
 		List<Category> categories = mongoTemplate.find(query, Category.class);
 		return new Item(categories, totalPages);
 	}
-
-
 
 	@Override
 	public Category findById(String categoryId, String email, String ownerEmail) {

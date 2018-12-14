@@ -37,7 +37,6 @@ public class AuthorController {
 	@Autowired
 	IAuthorService authorService;
 
-	
 	// findAll
 	@GetMapping()
 	public ResponseEntity<ResponseMessage> findAll(HttpServletRequest request, Integer page, Integer size,
@@ -73,8 +72,7 @@ public class AuthorController {
 
 	// creat author
 	@PostMapping()
-	public ResponseEntity<ResponseMessage> createAuthor(HttpServletRequest request,
-			@RequestBody Author newAuthor) {
+	public ResponseEntity<ResponseMessage> createAuthor(HttpServletRequest request, @RequestBody Author newAuthor) {
 		User user = authenSSOService.verify(request);
 		if (user == null)
 			return new ResponseEntity<ResponseMessage>(HttpStatus.UNAUTHORIZED);

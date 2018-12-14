@@ -22,7 +22,7 @@ public class AuthorService implements IAuthorService {
 
 	@Autowired
 	AuthorRepository authorRepository;
-	
+
 	@Autowired
 	IAuthorDao authorDao;
 
@@ -41,7 +41,7 @@ public class AuthorService implements IAuthorService {
 			return optional.get();
 		return null;
 	}
-	
+
 	@Override
 	public Item findAll(String keyword, Integer page, Integer size, String fields, String sort, String email,
 			String ownerEmail) {
@@ -86,8 +86,7 @@ public class AuthorService implements IAuthorService {
 
 	private Author createAuthor(Author newAuthor, String email, String ownerEmail) {
 		newAuthor.setCreatedAt(new Date());
-		newAuthor.setBirthDate(StringUtils.isEmpty(newAuthor.getBirthDate()) 
-     			? "" : newAuthor.getBirthDate().trim());
+		newAuthor.setBirthDate(StringUtils.isEmpty(newAuthor.getBirthDate()) ? "" : newAuthor.getBirthDate().trim());
 		newAuthor.setCreatedBy(email);
 		newAuthor.setOwnerBy(ownerEmail);
 		newAuthor = authorRepository.save(newAuthor);
@@ -133,16 +132,15 @@ public class AuthorService implements IAuthorService {
 	private Object updateAuthor(Author author, Author authorExist, String email) {
 		if (author.getName() != null && !author.getName().isEmpty()
 				&& !author.getName().equals(authorExist.getName())) {
-			Author authorCheck = authorRepository.findByNameAndOwnerBy(author.getName(),
-					authorExist.getOwnerBy());
+			Author authorCheck = authorRepository.findByNameAndOwnerBy(author.getName(), authorExist.getOwnerBy());
 			if (authorCheck != null)
 				return "Tên tác giả đã tồn tại. Vui lòng thử lại";
 			authorExist.setName(author.getName());
 		}
 		if (author.getDescription() != null && !author.getDescription().isEmpty())
 			authorExist.setDescription(author.getDescription());
-		
-		if (author.getBirthDate() != null && !author.getDescription().isEmpty() )
+
+		if (author.getBirthDate() != null && !author.getDescription().isEmpty())
 			authorExist.setBirthDate(author.getBirthDate());
 		author.setUpdatedAt(new Date());
 		author.setUpdatedBy(email);

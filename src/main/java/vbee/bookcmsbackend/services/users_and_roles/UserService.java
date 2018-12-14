@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import vbee.bookcmsbackend.authorization.IAuthorizationService;
-import vbee.bookcmsbackend.collections.Author;
 import vbee.bookcmsbackend.collections.Role;
 import vbee.bookcmsbackend.collections.User;
 import vbee.bookcmsbackend.config.APIConstant;

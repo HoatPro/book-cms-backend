@@ -37,7 +37,6 @@ public class CategoryController {
 	@Autowired
 	ICategoryService categoryService;
 
-	
 	// findAll
 	@CrossOrigin
 	@GetMapping()

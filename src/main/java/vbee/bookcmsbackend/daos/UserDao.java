@@ -19,7 +19,7 @@ import vbee.bookcmsbackend.models.Item;
 import vbee.bookcmsbackend.utils.HanleUltis;
 
 @Repository
-public class UserDao implements IUserDao{
+public class UserDao implements IUserDao {
 	private final MongoTemplate mongoTemplate;
 
 	@Autowired
@@ -38,7 +38,7 @@ public class UserDao implements IUserDao{
 		if (keyword != null && !keyword.isEmpty())
 			query.addCriteria(Criteria.where("email").regex(keyword));
 		query.addCriteria(Criteria.where("ownerBy").is(ownerEmail));
-		
+
 		// count
 		int totalPages = 1;
 		if (size != null) {
@@ -50,43 +50,43 @@ public class UserDao implements IUserDao{
 			query.with(pageRequest);
 		}
 		List<User> users = mongoTemplate.find(query, User.class);
-	      for (User user : users) {
-	    	  List<Role> roles = new ArrayList<>();
-	  		  for (String roleId : user.getRoleIds()) {
-	  			Role role = mongoTemplate.findById(roleId, Role.class);
-	  			if (role != null) {
-	  				List<Feature> features = new ArrayList<>();
-	  				if(role.getFeatureIds() !=null) {
-	  					for (String featureId : role.getFeatureIds()) {
-		  					Feature feature = mongoTemplate.findById(featureId, Feature.class);
-		  					if (feature != null) {
-		  						feature.setFrontendKey(null);
-		  						feature.setBackendKey(null);
-		  						features.add(feature);
-		  					}
-		  				}
-	  				}
-	  				role.setFeatureIds(null);
+		for (User user : users) {
+			List<Role> roles = new ArrayList<>();
+			for (String roleId : user.getRoleIds()) {
+				Role role = mongoTemplate.findById(roleId, Role.class);
+				if (role != null) {
+					List<Feature> features = new ArrayList<>();
+					if (role.getFeatureIds() != null) {
+						for (String featureId : role.getFeatureIds()) {
+							Feature feature = mongoTemplate.findById(featureId, Feature.class);
+							if (feature != null) {
+								feature.setFrontendKey(null);
+								feature.setBackendKey(null);
+								features.add(feature);
+							}
+						}
+					}
+					role.setFeatureIds(null);
 //     				role.setFeatures(features);
-	  				roles.add(role);
-	  			}
-	  		}
-	  		user.setRoleIds(null);
-	  		user.setRoles(roles);
-	  	 }
-	   
+					roles.add(role);
+				}
+			}
+			user.setRoleIds(null);
+			user.setRoles(roles);
+		}
+
 		return new Item(users, totalPages);
 	}
-	
+
 	@Override
 	public User findById(String userId) {
-		User user =  mongoTemplate.findById(userId, User.class);
+		User user = mongoTemplate.findById(userId, User.class);
 		List<Role> roles = new ArrayList<>();
 		for (String roleId : user.getRoleIds()) {
 			Role role = mongoTemplate.findById(roleId, Role.class);
 			if (role != null) {
 				List<Feature> features = new ArrayList<>();
-				if(role.getFeatureIds()!=null) {
+				if (role.getFeatureIds() != null) {
 					for (String featureId : role.getFeatureIds()) {
 						Feature feature = mongoTemplate.findById(featureId, Feature.class);
 						if (feature != null) {
