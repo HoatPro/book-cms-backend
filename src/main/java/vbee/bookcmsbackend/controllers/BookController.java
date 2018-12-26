@@ -60,12 +60,12 @@ public class BookController {
 	// findAll
 	@GetMapping()
 	public ResponseEntity<ResponseMessage> getBooks(HttpServletRequest request, Integer page, Integer size,
-			String fields, String sort, String statusIds, String categoryId, String keyword) {
+			String fields, String sort, String statusIds, String categoryId,String authorId, String keyword) {
 		User user = authenSSOService.verify(request);
 		if (user == null)
 			return new ResponseEntity<ResponseMessage>(HttpStatus.UNAUTHORIZED);
 		ResponseMessage resMessage = new ResponseMessage();
-		Item item = bookService.findAll(categoryId, statusIds, keyword, page, size, fields, sort, user.getEmail(),
+		Item item = bookService.findAll(categoryId,authorId, statusIds, keyword, page, size, fields, sort, user.getEmail(),
 				user.getOwnerBy());
 		if (item == null) {
 			return new ResponseEntity<ResponseMessage>(HttpStatus.FORBIDDEN);
@@ -91,7 +91,7 @@ public class BookController {
 		return ResponseEntity.ok(resMessage);
 	}
 
-	// creat book
+	// create book
 	@PostMapping()
 	public ResponseEntity<ResponseMessage> createBook(HttpServletRequest request, @RequestBody Book newBook) {
 		User user = authenSSOService.verify(request);
@@ -337,6 +337,26 @@ public class BookController {
 			return ResponseEntity.ok(resMessage);
 		}
 		resMessage.setStatus(1);
+		return ResponseEntity.ok(resMessage);
+	}
+	
+	//get status synthesis book 
+	@GetMapping("/{bookId}/synthesis-status")
+	public ResponseEntity<ResponseMessage> synthesizeStatusBook(HttpServletRequest request, @PathVariable String bookId) {
+		User user = authenSSOService.verify(request);
+		if (user == null)
+			return new ResponseEntity<ResponseMessage>(HttpStatus.UNAUTHORIZED);
+		Object response = synthesisService.synthesizeStatusBook(bookId, user.getEmail(), user.getOwnerBy());
+		ResponseMessage resMessage = new ResponseMessage();
+		if (response == null) {
+			return new ResponseEntity<ResponseMessage>(HttpStatus.FORBIDDEN);
+		} else if (response instanceof String) {
+			resMessage.setMessage((String) response);
+			resMessage.setStatus(0);
+			return ResponseEntity.ok(resMessage);
+		}
+		resMessage.setStatus(1);
+		resMessage.setResults(response);
 		return ResponseEntity.ok(resMessage);
 	}
 

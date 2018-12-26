@@ -140,7 +140,7 @@ public class AuthorService implements IAuthorService {
 		if (author.getDescription() != null && !author.getDescription().isEmpty())
 			authorExist.setDescription(author.getDescription());
 
-		if (author.getBirthDate() != null && !author.getDescription().isEmpty())
+		if (author.getBirthDate() != null && !author.getBirthDate().isEmpty())
 			authorExist.setBirthDate(author.getBirthDate());
 		author.setUpdatedAt(new Date());
 		author.setUpdatedBy(email);

@@ -12,6 +12,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.stereotype.Repository;
 
 import vbee.bookcmsbackend.collections.Book;
@@ -43,13 +45,14 @@ public class BookDao implements IBookDao {
 	private static final Logger logger = LoggerFactory.getLogger(BookDao.class);
 
 	@Override
-	public Item findAllBooks(String categoryId, String statusIds, String keyword, Integer page, Integer size,
+	public Item findAllBooks(String categoryId,String authorId, String statusIds, String keyword, Integer page, Integer size,
 			String fields, String sort, String createdByEmail, String ownerByEmail) {
-		// defaul page, size
+		// default page, size
 		if (page == null)
 			page = 0;
 		if (size == null)
 			size = 10;
+		Query query = new Query();
 		Criteria criteriaFinal = new Criteria();
 		List<Criteria> criterias = new ArrayList<Criteria>();
 
@@ -57,6 +60,10 @@ public class BookDao implements IBookDao {
 		if (categoryId != null && !categoryId.isEmpty()) {
 			criterias.add(Criteria.where("categoryIds").all(categoryId.trim()));
 		}
+		// authorIds
+				if (authorId != null && !authorId.isEmpty()) {
+					criterias.add(Criteria.where("authorIds").all(authorId.trim()));
+				}
 
 		// statusIds
 		if (statusIds != null && !statusIds.isEmpty()) {
@@ -80,21 +87,23 @@ public class BookDao implements IBookDao {
 		// keyword search
 		if (keyword != null && !keyword.isEmpty()) {
 			keyword = keyword.trim();
-			Criteria criteriaOrSearchField = new Criteria();
-			List<Criteria> criteriaOrSearchList = new ArrayList<Criteria>();
-			criteriaOrSearchList.add(Criteria.where("title").regex(keyword));
-			criteriaOrSearchList.add(Criteria.where("publicYear").regex(keyword));
-			criteriaOrSearchList.add(Criteria.where("publicMonth").regex(keyword));
-			criteriaOrSearchField = criteriaOrSearchField
-					.orOperator(criteriaOrSearchList.toArray(new Criteria[criteriaOrSearchList.size()]));
-			criterias.add(criteriaOrSearchField);
+			TextCriteria criteriaFullTextSearch = TextCriteria.forDefaultLanguage().matchingAny(keyword);
+			query = TextQuery.queryText(criteriaFullTextSearch);
+//			Criteria criteriaOrSearchField = new Criteria();
+//			List<Criteria> criteriaOrSearchList = new ArrayList<Criteria>();
+//			criteriaOrSearchList.add(Criteria.where("title").regex(keyword));
+//			criteriaOrSearchList.add(Criteria.where("publicYear").regex(keyword));
+//			criteriaOrSearchList.add(Criteria.where("publicMonth").regex(keyword));
+//			criteriaOrSearchField = criteriaOrSearchField
+//					.orOperator(criteriaOrSearchList.toArray(new Criteria[criteriaOrSearchList.size()]));
+//			criterias.add(criteriaOrSearchField);
 		}
 		// createdBy, ownerBy
 		if (createdByEmail != null)
 			criterias.add(Criteria.where("createdBy").is(createdByEmail));
 		// ownerBy email
 		criterias.add(Criteria.where("ownerBy").is(ownerByEmail));
-		Query query = new Query();
+		
 		if (!criterias.isEmpty()) {
 			criteriaFinal = criteriaFinal.andOperator(criterias.toArray(new Criteria[criterias.size()]));
 			query.addCriteria(criteriaFinal);
@@ -181,5 +190,6 @@ public class BookDao implements IBookDao {
 			return Boolean.TRUE;
 		return Boolean.FALSE;
 	}
+
 
 }

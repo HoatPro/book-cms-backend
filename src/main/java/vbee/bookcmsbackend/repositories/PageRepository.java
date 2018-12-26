@@ -8,4 +8,6 @@ public interface PageRepository extends MongoRepository<Page, String> {
 
 	Page findByDisplayName(String displayName);
 
+	Page findByKey(String key);
+
 }

@@ -77,11 +77,9 @@ public class UserController {
 		Object response = userService.create(newUser, user.getEmail(), user.getOwnerBy());
 		ResponseMessage resMessage = new ResponseMessage();
 		if (response == null) {
-
 			return new ResponseEntity<ResponseMessage>(HttpStatus.FORBIDDEN);
-		} else if (response instanceof String) {
-			resMessage.setMessage((String) response);
-			resMessage.setStatus(0);
+		} else if (response instanceof Integer) {
+			resMessage.setStatus((Integer) response);
 			return ResponseEntity.ok(resMessage);
 		}
 		resMessage.setStatus(1);

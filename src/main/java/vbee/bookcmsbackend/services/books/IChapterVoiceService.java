@@ -15,4 +15,6 @@ public interface IChapterVoiceService {
 	List<ChapterVoice> findByBookIdAndVoiceIdAndSuccess(String bookId, String voiceValue, String synthesisId,
 			Boolean isSuccess);
 
+	ChapterVoice findByVoiceIdAndChapterIdLatest(String value, String id);
+
 }

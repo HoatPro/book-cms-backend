@@ -2,6 +2,7 @@ package vbee.bookcmsbackend.services.users_and_roles;
 
 import java.util.List;
 
+import vbee.bookcmsbackend.collections.Feature;
 import vbee.bookcmsbackend.collections.Page;
 
 public interface IPageService {
@@ -15,5 +16,7 @@ public interface IPageService {
 	Object update(String pageId, Page existPage);
 
 	Object delete(String pageId);
+
+	Page findByKey(String frontendKey);
 
 }

@@ -1,24 +1,18 @@
 package vbee.bookcmsbackend.services.users_and_roles;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import vbee.bookcmsbackend.authorization.IAuthorizationService;
-import vbee.bookcmsbackend.collections.Role;
 import vbee.bookcmsbackend.collections.User;
 import vbee.bookcmsbackend.collections.UserAdmin;
-import vbee.bookcmsbackend.config.APIConstant;
-import vbee.bookcmsbackend.config.AppConstant;
 import vbee.bookcmsbackend.daos.IUserAdminDao;
 import vbee.bookcmsbackend.models.Item;
-import vbee.bookcmsbackend.models.UserMapFeature;
 import vbee.bookcmsbackend.repositories.UserAdminRepository;
 
 
@@ -70,14 +64,19 @@ public class UserAdminService implements IUserAdminService {
 
 	@Override
 	public Object create(UserAdmin newUserAdmin) {
-		if (newUserAdmin.getEmail() == null || newUserAdmin.getEmail().isEmpty()) {
+		String email = newUserAdmin.getEmail();
+		if (StringUtils.isEmpty(email)) {
 			return " Email không được để trống!! ";
+		} else {
+			Optional<UserAdmin> option = userAdminRepository.findByEmail(email);
+			if (!Optional.empty().equals(option))
+				return "Người dùng đã tồn tại";
+			else {
+				newUserAdmin.setCreatedAt(new Date());
+				return userAdminRepository.save(newUserAdmin);
+			}
+
 		}
-		UserAdmin userExist = userAdminRepository.findByEmailAndOwnerBy(newUserAdmin.getEmail(),newUserAdmin.getOwnerBy());
-		if (userExist != null)
-			return "Người dùng đã tồn tại";
-		newUserAdmin.setCreatedAt(new Date());
-		return userAdminRepository.save(newUserAdmin);
 	}
 
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import vbee.bookcmsbackend.authorization.IAuthorizationService;
+import vbee.bookcmsbackend.collections.Feature;
 import vbee.bookcmsbackend.collections.Page;
 import vbee.bookcmsbackend.config.APIConstant;
 import vbee.bookcmsbackend.daos.IPageDao;
@@ -25,6 +26,9 @@ public class PageService implements IPageService {
 
 	@Autowired
 	IPageDao pageDao;
+	
+	@Autowired
+	IFeatureService featureService;
 
 	@Override
 	public List<Page> findAll(String email, String ownerBy) {
@@ -97,6 +101,11 @@ public class PageService implements IPageService {
 			return null;
 		pageRepository.delete(pageExist);
 		return Boolean.TRUE;
+	}
+
+	@Override
+	public Page findByKey (String frontendKey) {
+		return pageRepository.findByKey(frontendKey);
 	}
 
 }

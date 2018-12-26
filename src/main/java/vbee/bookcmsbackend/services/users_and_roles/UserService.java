@@ -10,11 +10,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import vbee.bookcmsbackend.authen.sso.SSOApi;
 import vbee.bookcmsbackend.authorization.IAuthorizationService;
 import vbee.bookcmsbackend.collections.Role;
 import vbee.bookcmsbackend.collections.User;
 import vbee.bookcmsbackend.config.APIConstant;
 import vbee.bookcmsbackend.config.AppConstant;
+import vbee.bookcmsbackend.config.ConfigProperties;
 import vbee.bookcmsbackend.daos.IUserDao;
 import vbee.bookcmsbackend.models.Item;
 import vbee.bookcmsbackend.models.UserMapFeature;
@@ -37,6 +39,8 @@ public class UserService implements IUserService {
 	@Autowired
 	IUserDao userDao;
 
+	@Autowired
+	ConfigProperties configProperties;
 	private List<String> roleIds;
 
 	@Override
@@ -88,14 +92,19 @@ public class UserService implements IUserService {
 		if (permission == AppConstant.PERMISSION_UNDEFINED)
 			return null;
 		if (newUser.getEmail() == null || newUser.getEmail().isEmpty()) {
-			return " Email không được để trống!! ";
+			return -1;
+		}
+		if (!SSOApi.checkUserExists(configProperties.getSsoPath(), newUser.getEmail())) {
+			return -2;
 		}
 		User userExist = userRepository.findByEmailAndOwnerBy(newUser.getEmail(), ownerEmail);
 		if (userExist != null)
-			return "Người dùng đã tồn tại";
+			return -3;
 		newUser.setCreatedAt(new Date());
 		newUser.setOwnerBy(ownerEmail);
-		return userRepository.save(newUser);
+		newUser = userRepository.save(newUser);
+		loadUserFeatures(newUser);
+		return newUser;
 	}
 
 	@Override
@@ -112,6 +121,7 @@ public class UserService implements IUserService {
 		if (userExist == null)
 			return null;
 		userRepository.delete(userExist);
+		UserMapFeature.removeUser(userExist.getEmail());
 		return Boolean.TRUE;
 	}
 
@@ -138,6 +148,7 @@ public class UserService implements IUserService {
 				userExist.setRoleIds(user.getRoleIds());
 			}
 		}
+		loadUserFeatures(userExist);
 		user.setUpdatedAt(new Date());
 		return userRepository.save(userExist);
 	}
@@ -146,17 +157,21 @@ public class UserService implements IUserService {
 	public void loadAllUserFeatures() {
 		List<User> users = userRepository.findAll();
 		for (User user : users) {
-			List<String> featureIds = new ArrayList<>();
-			if (user.getRoleIds() != null) {
-				for (String roleId : user.getRoleIds()) {
-					Role role = roleService.findById(roleId);
-					if (role.getFeatureIds() != null)
-						featureIds.addAll(role.getFeatureIds());
-				}
-			}
-			UserMapFeature.loadUserFeauture(user.getEmail(), featureIds);
-			featureIds = null;
+			loadUserFeatures(user);
 		}
 	}
 
+	@Override
+	public void loadUserFeatures(User user) {
+		List<String> featureIds = new ArrayList<>();
+		if (user.getRoleIds() != null) {
+			for (String roleId : user.getRoleIds()) {
+				Role role = roleService.findById(roleId);
+				if (role.getFeatureIds() != null)
+					featureIds.addAll(role.getFeatureIds());
+			}
+		}
+		UserMapFeature.loadUserFeauture(user.getEmail(), featureIds);
+		featureIds = null;
+	}
 }

@@ -1,14 +1,19 @@
 package vbee.bookcmsbackend.services.users_and_roles;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.xmlbeans.soap.SOAPArrayType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import vbee.bookcmsbackend.authorization.IAuthorizationService;
 import vbee.bookcmsbackend.collections.Feature;
+import vbee.bookcmsbackend.collections.Page;
+import vbee.bookcmsbackend.collections.Role;
+import vbee.bookcmsbackend.collections.User;
 import vbee.bookcmsbackend.config.APIConstant;
 import vbee.bookcmsbackend.config.AppConstant;
 import vbee.bookcmsbackend.daos.IFeatureDao;
@@ -25,6 +30,12 @@ public class FeatureService implements IFeatureService {
 	@Autowired
 	IFeatureDao featureDao;
 
+	@Autowired
+	IRoleService roleService;
+	
+	@Autowired
+	IPageService pageService;
+	
 	@Override
 	public List<Feature> findByBackendKey(String apiKey) {
 		return featureRepository.findByBackendKey(apiKey);
@@ -42,11 +53,11 @@ public class FeatureService implements IFeatureService {
 	public List<Feature> findAll(String email, String ownerBy) {
 		if (ownerBy == null || ownerBy.isEmpty())
 			return null;
-		Integer permission = authorizationService.checkPermission(email, APIConstant.ROLE_USER_FEATURE_API);
-		if (permission == AppConstant.PERMISSION_UNDEFINED)
-			return null;
-		else if (permission == AppConstant.PERMISSION_ALL_UNIT)
-			email = null;
+//		Integer permission = authorizationService.checkPermission(email, APIConstant.ROLE_USER_FEATURE_API);
+//		if (permission == AppConstant.PERMISSION_UNDEFINED)
+//			return null;
+//		else if (permission == AppConstant.PERMISSION_ALL_UNIT)
+//			email = null;
 		return featureDao.findAll(email, ownerBy);
 	}
 
@@ -104,6 +115,33 @@ public class FeatureService implements IFeatureService {
 			return null;
 		featureRepository.delete(featureExist);
 		return Boolean.TRUE;
+	}
+
+	@Override
+	public List<Feature> checkPermission(User user, String frontendKey) {
+		List<Feature> userFeatures = new ArrayList<>();
+		List<Feature> allowFeatures = new ArrayList<>();
+		if (user.getRoleIds() != null) {
+			for (String roleId : user.getRoleIds()) {
+				Role role = roleService.findById(roleId);
+				userFeatures.addAll(featureRepository.findByFeatureIds(role.getFeatureIds()));
+			}
+		}
+		Page page = pageService.findByKey(frontendKey);
+		List<Feature> pageFeatures = featureRepository.findByFeatureIds(page.getFeatureIds());
+		if(pageFeatures!=null) {
+			for (Feature feature : pageFeatures) {
+				for (Feature feature2 : userFeatures) {
+					if(feature.getId().equals(feature2.getId())) {
+					   allowFeatures.add(feature);					 
+					}
+					
+				}
+			}
+			
+		}
+	
+		return allowFeatures;
 	}
 
 }

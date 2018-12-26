@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import vbee.bookcmsbackend.authen.sso.IAuthenSSOService;
@@ -106,7 +107,6 @@ public class FeatureController {
 	@CrossOrigin
 	@DeleteMapping("/{featureId}")
 	public ResponseEntity<ResponseMessage> deleteRole(HttpServletRequest request, @PathVariable String featureId) {
-
 		if (featureId == null)
 			return new ResponseEntity<ResponseMessage>(HttpStatus.UNAUTHORIZED);
 		Object response = featureService.delete(featureId);
@@ -119,6 +119,21 @@ public class FeatureController {
 			return ResponseEntity.ok(resMessage);
 		}
 		resMessage.setStatus(1);
+		return ResponseEntity.ok(resMessage);
+	}
+	
+	@GetMapping("/check-permission")
+	public ResponseEntity<ResponseMessage> checkPermission(HttpServletRequest request, @RequestParam String frontendKey) {
+		if (frontendKey == null)
+			return new ResponseEntity<ResponseMessage>(HttpStatus.UNAUTHORIZED);
+		User user = authenSSOService.verify(request);
+		System.out.println(user.getEmail());
+		if (user == null)
+			return new ResponseEntity<ResponseMessage>(HttpStatus.UNAUTHORIZED);
+		List<Feature> features = featureService.checkPermission(user, frontendKey);
+		ResponseMessage resMessage = new ResponseMessage();
+		resMessage.setStatus(1);
+		resMessage.setResults(features);
 		return ResponseEntity.ok(resMessage);
 	}
 }

@@ -38,11 +38,11 @@ public class RoleService implements IRoleService {
 	public List<Role> findAll(String email, String ownerEmail) {
 		if (ownerEmail == null || ownerEmail.isEmpty())
 			return null;
-		Integer permission = authorizationService.checkPermission(email, APIConstant.ROLE_USER_FEATURE_API);
-		if (permission == AppConstant.PERMISSION_UNDEFINED)
-			return null;
-		else if (permission == AppConstant.PERMISSION_ALL_UNIT)
-			email = null;
+//		Integer permission = authorizationService.checkPermission(email, APIConstant.ROLE_USER_FEATURE_API);
+//		if (permission == AppConstant.PERMISSION_UNDEFINED)
+//			return null;
+//		else if (permission == AppConstant.PERMISSION_ALL_UNIT)
+//			email = null;
 		return roleDao.findAll(email, ownerEmail);
 
 	}

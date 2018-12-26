@@ -10,8 +10,8 @@ import vbee.bookcmsbackend.models.Item;
 
 public interface IBookService {
 
-	Item findAll(String categoryId, String statusIds, String keyword, Integer page, Integer size, String fields,
-			String sort, String email, String ownerEmail);
+	Item findAll(String categoryId, String authorId, String statusIds, String keyword, Integer page, Integer size,
+			String fields, String sort, String email, String ownerEmail);
 
 	Book findById(String bookId);
 
@@ -31,5 +31,6 @@ public interface IBookService {
 
 	String calllbackSynthesis(String bookId, String voiceValue, long startBookTime, Integer bitRate, String audioLink,
 			String resultType, String chapterId, String synthesisId);
+
 
 }

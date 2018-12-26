@@ -18,4 +18,10 @@ public class UserMapFeature {
 		}
 		return null;
 	}
+
+	public static void removeUser(String email) {
+		if(mapUserFeature.containsKey(email)) {
+			mapUserFeature.remove(email);
+		}
+	}
 }

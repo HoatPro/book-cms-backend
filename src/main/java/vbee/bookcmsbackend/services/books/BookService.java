@@ -63,8 +63,8 @@ public class BookService implements IBookService {
 	IChapterVoiceService chapterVoiceService;
 
 	@Override
-	public Item findAll(String categoryId, String statusIds, String keyword, Integer page, Integer size, String fields,
-			String sort, String email, String ownerEmail) {
+	public Item findAll(String categoryId, String authorId, String statusIds, String keyword, Integer page,
+			Integer size, String fields, String sort, String email, String ownerEmail) {
 		if (ownerEmail == null || ownerEmail.isEmpty())
 			return null;
 		Integer permission = authorizationService.checkPermission(email, APIConstant.FIND_BOOK_FEATURE_API);
@@ -72,7 +72,8 @@ public class BookService implements IBookService {
 			return null;
 		else if (permission == AppConstant.PERMISSION_ALL_UNIT)
 			email = null;
-		return bookDao.findAllBooks(categoryId, statusIds, keyword, page, size, fields, sort, email, ownerEmail);
+		return bookDao.findAllBooks(categoryId, authorId, statusIds, keyword, page, size, fields, sort, email,
+				ownerEmail);
 	}
 
 	@Override
@@ -195,13 +196,10 @@ public class BookService implements IBookService {
 			for (Category category : book.getCategories()) {
 				Category categoryExist = categoryService.findById(category.getId());
 				if (categoryExist != null) {
-					
 					categoryIds.add(categoryExist.getId());
 				}
 			}
 			bookExist.setCategoryIds(categoryIds);
-
-			System.out.println(bookExist.getCategoryIds());
 		}
 
 		if (book.getImage() != null && !book.getImage().isEmpty())

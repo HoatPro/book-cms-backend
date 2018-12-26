@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import vbee.bookcmsbackend.collections.ChapterVoice;
+import vbee.bookcmsbackend.daos.IChapterVoiceDao;
 import vbee.bookcmsbackend.repositories.ChapterVoiceRepository;
 
 @Service
@@ -14,6 +15,9 @@ public class ChapterVoiceService implements IChapterVoiceService {
 	@Autowired
 	ChapterVoiceRepository chapterVoiceRepository;
 
+	@Autowired
+	IChapterVoiceDao chapterVoiceDao;
+	
 	@Override
 	public ChapterVoice findByVoiceIdAndChapterId(String voiceId, String chapterId) {
 		return chapterVoiceRepository.findByVoiceIdAndChapterId(voiceId, chapterId);
@@ -34,6 +38,11 @@ public class ChapterVoiceService implements IChapterVoiceService {
 			Boolean isSuccess) {
 		return chapterVoiceRepository.findByBookIdAndVoiceIdAndSynthesisIdAndIsSuccess(bookId, voiceId, synthesisId,
 				isSuccess);
+	}
+
+	@Override
+	public ChapterVoice findByVoiceIdAndChapterIdLatest(String value, String chapterId) {
+		return chapterVoiceDao.findByVoiceIdAndChapterIdLatest(value, chapterId);
 	}
 
 }
